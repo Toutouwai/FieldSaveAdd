@@ -1,0 +1,78 @@
+<?php
+
+/**
+ *
+ * Field Save + Add New
+ *
+ * @author Robin Sallis
+ *
+ * ProcessWire 3.x
+ * Copyright (C) 2011 by Ryan Cramer
+ * Licensed under GNU/GPL v2, see LICENSE.TXT
+ *
+ * http://www.processwire.com
+ * http://www.ryancramer.com
+ *
+ */
+
+class FieldSaveAdd extends WireData implements Module {
+
+	/**
+	 * Module information
+	 */
+	public static function getModuleInfo() {
+		return array(
+			'title' => "Field Save + Add New",
+			'version' => 1,
+			'author' => 'Robin Sallis',
+			'href' => 'https://github.com/Toutouwai/FieldSaveAdd',
+			'summary' => 'Adds a "Save + Add New" button when editing a field.',
+			'icon' => 'plus-circle',
+			'autoload' => "template=admin",
+		);
+	}
+
+	/**
+	 * Ready
+	 */
+	public function ready() {
+		$this->addHookAfter('ProcessField::buildEditForm', $this, 'addButton');
+		$this->addHookBefore('ProcessField::executeSave', $this, 'redirectToAdd');
+	}
+
+	/**
+	 * Add "Save + Add New" button
+	 *
+	 * @param HookEvent $event
+	 */
+	public function addButton(HookEvent $event) {
+		$form = $event->return;
+		// Only if editing a field
+		if($this->input->urlSegment(1) !== 'edit') return;
+		// Add button
+		$f = $this->modules->InputfieldSubmit;
+		$f->name = 'submit_save_field_add';
+		$f->value = $this->_('Save + Add New');
+		$f->class .= ' ui-priority-secondary head_button_clone';
+		$form->insertAfter($f, $form->getChildByName('submit_save_field'));
+	}
+
+	/**
+	 * Redirect to add new field
+	 *
+	 * @param HookEvent $event
+	 */
+	public function redirectToAdd(HookEvent $event) {
+		if(!$this->input->post->submit_save_field_add) return;
+		$this->input->post->submit_save_field = 'Save';
+		$this->addHookBefore('Session::redirect', function(HookEvent $event) {
+			$url = $event->arguments(0);
+			$field_id = (int) $this->input->post->id;
+			// Only redirect if not duplicating a field, adding to template, etc.
+			if($url === './' || $url === "edit?id=$field_id") {
+				$this->session->redirect('./add');
+			}
+		});
+	}
+
+}
