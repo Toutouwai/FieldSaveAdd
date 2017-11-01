@@ -23,7 +23,7 @@ class FieldSaveAdd extends WireData implements Module {
 	public static function getModuleInfo() {
 		return array(
 			'title' => "Field Save + Add New",
-			'version' => 1,
+			'version' => 2,
 			'author' => 'Robin Sallis',
 			'href' => 'https://github.com/Toutouwai/FieldSaveAdd',
 			'summary' => 'Adds a "Save + Add New" button when editing a field.',
@@ -49,6 +49,8 @@ class FieldSaveAdd extends WireData implements Module {
 		$form = $event->return;
 		// Only if editing a field
 		if($this->input->urlSegment(1) !== 'edit') return;
+		// Not in a modal (e.g. field add or edit from ProcessTemplate)
+		if($this->input->get->modal) return;
 		// Add button
 		$f = $this->modules->InputfieldSubmit;
 		$f->name = 'submit_save_field_add';
