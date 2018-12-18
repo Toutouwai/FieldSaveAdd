@@ -22,13 +22,13 @@ class FieldSaveAdd extends WireData implements Module {
 	 */
 	public static function getModuleInfo() {
 		return array(
-			'title' => "Field Save + Add New",
-			'version' => 2,
+			'title' => 'Field Save + Add New',
+			'summary' => 'Adds a "Save + Add New" button when editing a field.',
+			'version' => '0.1.2',
 			'author' => 'Robin Sallis',
 			'href' => 'https://github.com/Toutouwai/FieldSaveAdd',
-			'summary' => 'Adds a "Save + Add New" button when editing a field.',
 			'icon' => 'plus-circle',
-			'autoload' => "template=admin",
+			'autoload' => 'template=admin',
 		);
 	}
 
